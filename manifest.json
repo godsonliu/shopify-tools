@@ -1,0 +1,50 @@
+{
+  "name": "shopify tools",
+  "description": "shopify小工具",
+  "version": "1.0",
+  "manifest_version": 3,
+  "author": "godson",
+  "permissions": ["scripting", "storage"],
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": false
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://*.myshopify.com/*",
+        "https://*.anker.com/*",
+        "https://*.eufy.com/*",
+        "https://*.mach.tech/*",
+        "https://*.soundcore.com/*",
+        "https://*.seenebula.com/*",
+        "https://*.ankermake.com/*",
+        "https://*.ankerwork.com/*"
+      ],
+      "exclude_matches": ["https://*.myshopify.com/admin/*"],
+      "js": ["inject.js"]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "matches": [
+        "https://*.myshopify.com/*",
+        "https://*.anker.com/*",
+        "https://*.eufy.com/*",
+        "https://*.mach.tech/*",
+        "https://*.soundcore.com/*",
+        "https://*.seenebula.com/*",
+        "https://*.ankermake.com/*",
+        "https://*.ankerwork.com/*"
+      ],
+      "resources": ["menus.js"]
+    }
+  ],
+  "icons": {
+    "16": "/images/eufy_16.png",
+    "32": "/images/eufy_32.png",
+    "48": "/images/eufy_48.png",
+    "64": "/images/eufy_64.png",
+    "128": "/images/eufy_128.png"
+  }
+}
