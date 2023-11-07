@@ -555,7 +555,7 @@
       var headless = location.href.match(/(www|beta)\.(.+)\.(com|tech)/);
       var resourceId, themeId, page, blog;
       if (headless) {
-        var countrys = ["us", "uk", "ca", "eu-de", "eu-en"];
+        var countrys = ["us", "uk", "ca", "eu-de", "eu-en", "fr", "nl"];
         var country = "us";
         countrys.forEach(function (item) {
           if (
