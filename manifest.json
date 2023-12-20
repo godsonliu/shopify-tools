@@ -12,6 +12,7 @@
   "content_scripts": [
     {
       "matches": [
+        "http://localhost:3000/*",
         "https://*.myshopify.com/*",
         "https://*.anker.com/*",
         "https://*.eufy.com/*",
@@ -28,6 +29,7 @@
   "web_accessible_resources": [
     {
       "matches": [
+        "http://localhost:3000/*",
         "https://*.myshopify.com/*",
         "https://*.anker.com/*",
         "https://*.eufy.com/*",

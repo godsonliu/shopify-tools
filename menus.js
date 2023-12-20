@@ -553,9 +553,13 @@
         metabuf = "metabuf";
       }
       var headless = location.href.match(/(www|beta)\.(.+)\.(com|tech)/);
+      var isLocal = location.href.indexOf("localhost") > -1;
+      if (isLocal) {
+        metabuf = "beta-metabuf";
+      }
       var resourceId, themeId, page, blog;
-      if (headless) {
-        var countrys = ["us", "uk", "ca", "eu-de", "eu-en", "fr", "nl"];
+      if (headless || isLocal) {
+        var countrys = ["us", "uk", "ca", "eu-de", "eu-en", "fr", "nl", "it"];
         var country = "us";
         countrys.forEach(function (item) {
           if (
@@ -567,7 +571,7 @@
         });
         if (country === "eu-de") country = "de";
         if (country === "eu-en") country = "eu";
-        if (isBeta) {
+        if (isBeta && headless) {
           origin = origin.replace(headless[2], "myshopify");
           origin = origin.replace(".tech", ".com");
           origin = origin.replace(
@@ -575,7 +579,33 @@
             `beta-${headless[2]}-${country}`
           );
         } else {
-          origin = origin.replace(headless[1], country);
+          if (headless) {
+            origin = origin.replace(headless[1], country);
+          }
+        }
+        if (isLocal) {
+          const brand = JSON.parse(document.getElementById("__NEXT_DATA__").innerHTML).props.pageProps.shop.name.toLowerCase();
+          if (brand.indexOf("eufy") > -1) {
+            origin = "https://beta-eufy-us.myshopify.com";
+          }
+          if (brand.indexOf("anker") > -1) {
+            origin = "https://beta-anker-us.myshopify.com";
+          }
+          if (brand.indexOf("ankermake") > -1) {
+            origin = "https://beta-ankermake-us.myshopify.com";
+          }
+          if (brand.indexOf("mach") > -1) {
+            origin = "https://beta-mach-us.myshopify.com";
+          }
+          if (brand.indexOf("soundcore") > -1) {
+            origin = "https://beta-soundcore-us.myshopify.com";
+          }
+          if (brand.indexOf("seenebula") > -1) {
+            origin = "https://beta-seenebula-us.myshopify.com";
+          }
+          if (brand.indexOf("ankerwork") > -1) {
+            origin = "https://beta-ankerwork-us.myshopify.com";
+          }
         }
         var id;
         if (type === "articles") {
