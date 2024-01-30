@@ -584,7 +584,9 @@
           }
         }
         if (isLocal) {
-          const brand = JSON.parse(document.getElementById("__NEXT_DATA__").innerHTML).props.pageProps.shop.name.toLowerCase();
+          const brand = JSON.parse(
+            document.getElementById("__NEXT_DATA__").innerHTML
+          ).props.pageProps.shop.name.toLowerCase();
           if (brand.indexOf("eufy") > -1) {
             origin = "https://beta-eufy-us.myshopify.com";
           }
@@ -617,6 +619,9 @@
                 .props.pageProps.slug
             }`;
           }
+        } else if (type === "collections") {
+          id = JSON.parse(document.getElementById("__NEXT_DATA__").innerHTML)
+            .props.pageProps.id;
         } else {
           id = JSON.parse(document.getElementById("__NEXT_DATA__").innerHTML)
             .props.pageProps[type.substring(0, type.length - 1)].id;
