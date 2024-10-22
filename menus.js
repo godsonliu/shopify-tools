@@ -91,7 +91,7 @@
       self.currentMenu,
       "menu inner"
     ).then(function () {
-      self.currentMenu.remove();
+      self.currentMenu?.remove();
       self.currentMenu = self.parentMenu.pop();
       self.levelItems = self.parentItems.pop();
     });
@@ -521,12 +521,12 @@
         title: "template",
       },
       {
-        id: "code",
-        title: "code",
-      },
-      {
         id: "file",
         title: "file",
+      },
+      {
+        id: "shop",
+        title: "shop",
       },
       {
         id: "admin",
@@ -534,10 +534,10 @@
       },
     ],
     onClick: function (item) {
-      var url = "";
-      var origin = location.origin;
-      var pathname = location.pathname;
-      var type = "pages";
+      let origin = location.origin;
+      let pathname = location.pathname;
+      let type = "pages";
+      let url = "";
       ["products", "pages", "collections", "blogs"].forEach((item) => {
         if (pathname.indexOf(item) > -1) {
           if (item === "blogs") {
@@ -547,89 +547,38 @@
           }
         }
       });
-      var isBeta = origin.indexOf("beta") > -1;
-      var metabuf = isBeta ? "beta-metabuf" : "metabuf";
-      if (origin.indexOf("mach") > -1) {
-        metabuf = "metabuf";
-      }
-      var headless = location.href.match(/(www|beta)\.(.+)\.(com|tech)/);
-      var isLocal = location.href.indexOf("localhost") > -1;
-      if (isLocal) {
-        metabuf = "beta-metabuf";
-      }
-      var resourceId, themeId, page, blog;
-      if (headless || isLocal) {
-        var countrys = ["us", "uk", "ca", "eu-de", "eu-en", "fr", "nl", "it"];
-        var country = "us";
-        countrys.forEach(function (item) {
-          if (
-            pathname.indexOf("/" + item + "/") > -1 ||
-            pathname === "/" + item
-          ) {
-            country = item;
-          }
-        });
-        if (country === "eu-de") country = "de";
-        if (country === "eu-en") country = "eu";
-        if (isBeta && headless) {
-          origin = origin.replace(headless[2], "myshopify");
-          origin = origin.replace(".tech", ".com");
-          origin = origin.replace(
-            headless[1],
-            `beta-${headless[2]}-${country}`
-          );
+      const headless = !!document.getElementById("__NEXT_DATA__");
+      let isBeta = origin.indexOf("beta") > -1;
+      let metabuf = isBeta ? "beta-metabuf" : "metabuf";
+
+      let resourceId, themeId, blog;
+      if (headless) {
+        const nextData = JSON.parse(
+          document.getElementById("__NEXT_DATA__").innerHTML
+        );
+        origin = nextData.props.pageProps.shop.primaryDomain.url;
+        if (origin.indexOf("beta") > -1) {
+          isBeta = true;
+          metabuf = "beta-metabuf";
+        }
+
+        const { pageProps } = nextData.props;
+
+        let id =
+          pageProps.id ||
+          pageProps?.page?.id ||
+          pageProps?.product?.id ||
+          pageProps?.collection?.id ||
+          pageProps?.collections?.id ||
+          pageProps?.blog_article?.article?.id ||
+          (pageProps?.blog && "blog");
+        if (id === "blog") {
+          blog = `${origin}/admin/articles`;
         } else {
-          if (headless) {
-            origin = origin.replace(headless[1], country);
-          }
+          resourceId = id?.split("/").reverse()[0];
         }
-        if (isLocal) {
-          const brand = JSON.parse(
-            document.getElementById("__NEXT_DATA__").innerHTML
-          ).props.pageProps.shop.name.toLowerCase();
-          if (brand.indexOf("eufy") > -1) {
-            origin = "https://beta-eufy-us.myshopify.com";
-          }
-          if (brand.indexOf("anker") > -1) {
-            origin = "https://beta-anker-us.myshopify.com";
-          }
-          if (brand.indexOf("ankermake") > -1) {
-            origin = "https://beta-ankermake-us.myshopify.com";
-          }
-          if (brand.indexOf("mach") > -1) {
-            origin = "https://beta-mach-us.myshopify.com";
-          }
-          if (brand.indexOf("soundcore") > -1) {
-            origin = "https://beta-soundcore-us.myshopify.com";
-          }
-          if (brand.indexOf("seenebula") > -1) {
-            origin = "https://beta-seenebula-us.myshopify.com";
-          }
-          if (brand.indexOf("ankerwork") > -1) {
-            origin = "https://beta-ankerwork-us.myshopify.com";
-          }
-        }
-        var id;
-        if (type === "articles") {
-          id = JSON.parse(document.getElementById("__NEXT_DATA__").innerHTML)
-            .props.pageProps.blog_article?.article.id;
-          if (!id) {
-            blog = `${origin}/admin/blogs?query=${
-              JSON.parse(document.getElementById("__NEXT_DATA__").innerHTML)
-                .props.pageProps.slug
-            }`;
-          }
-        } else if (type === "collections") {
-          id = JSON.parse(document.getElementById("__NEXT_DATA__").innerHTML)
-            .props.pageProps.id;
-        } else {
-          id = JSON.parse(document.getElementById("__NEXT_DATA__").innerHTML)
-            .props.pageProps[type.substring(0, type.length - 1)].id;
-        }
-        resourceId = id?.split("/").reverse()[0];
       } else {
         resourceId = window.meta.page.resourceId;
-        page = window.dataLayerData.page_group;
         themeId = window.Shopify.theme.id;
       }
       switch (item.id) {
@@ -651,7 +600,7 @@
             url = "";
           }
           if (pathname === "/" && !headless) {
-            url = `${origin}/admin/apps/metabuf/shop`;
+            url = `${origin}/admin/apps/${metabuf}/shop`;
           }
           break;
         case "template":
@@ -659,10 +608,8 @@
             url = `${origin}/admin/themes/${themeId}/editor?previewPath=${pathname}`;
           }
           break;
-        case "code":
-          if (themeId) {
-            url = `${origin}/admin/themes/${themeId}?key=templates/${page}.json`;
-          }
+        case "shop":
+          url = `${origin}/admin/apps/${metabuf}/shop`;
           break;
         case "file":
           url = `${origin}/admin/content/files`;
@@ -677,6 +624,37 @@
     },
   });
 
+  const viewPicInfo = () => {
+    let tip = document.createElement("div");
+    tip.style.position = "fixed";
+    tip.style.zIndex = 999999;
+    tip.style.backgroundColor = "#fff";
+    tip.style.borderRadius = "12px";
+    tip.style.padding = "5px 10px";
+    tip.style.boxShadow = "0 0 10px rgba(0,0,0,.3)";
+    document.body.appendChild(tip);
+    let imgs = document.querySelectorAll("img");
+    for (let i = 0; i < imgs.length; i++) {
+      imgs[i].addEventListener("mouseenter", function (e) {
+        let img = new Image();
+        img.src = this.getAttribute("src");
+        img.onload = function () {
+          tip.style.display = "block";
+          tip.style.top = e.clientY + 10 + "px";
+          tip.style.left = e.clientX + 10 + "px";
+          tip.innerHTML = `${img.width}x${img.height}`;
+        };
+      });
+      imgs[i].addEventListener("mousemove", function (e) {
+        tip.style.top = e.clientY + 10 + "px";
+        tip.style.left = e.clientX + 10 + "px";
+      });
+      imgs[i].addEventListener("mouseleave", function (e) {
+        tip.style.display = "none";
+      });
+    }
+  };
+
   var clickCount = 0;
   var timer;
   var maxClick = 2;
@@ -684,14 +662,44 @@
     "message",
     function (e) {
       if (e.data.type === "shopifyTools") {
-        if (e.data.checkbox) {
+        if (e.data.checkbox1) {
           maxClick = 3;
+        }
+        if (e.data.checkbox2) {
+          viewPicInfo();
         }
       }
     },
     false
   );
   document.addEventListener("click", function (e) {
+    const includes = [
+      "localhost",
+      "anker.com",
+      "ankersolix.com",
+      "eufy.com",
+      "mach.com",
+      "soundcore.com",
+      "seenebula.com",
+      "ankermake.com",
+      "ankerwork.com",
+      "beta-anker-",
+      "beta-ankersolix-",
+      "beta-eufy-",
+      "beta-mach-",
+      "beta-soundcore-",
+      "beta-seenebula-",
+      "beta-ankermake-",
+      "beta-ankerwork-",
+    ];
+    const excludes = ["admin.shopify.com"];
+    if (
+      !includes.some((url) => location.href.indexOf(url) > -1) ||
+      excludes.some((url) => location.href.indexOf(url) > -1)
+    ) {
+      return;
+    }
+
     clearTimeout(timer);
     timer = setTimeout(() => {
       clickCount = 0;

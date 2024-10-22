@@ -4,41 +4,23 @@
   "version": "1.0",
   "manifest_version": 3,
   "author": "godson",
-  "permissions": ["scripting", "storage"],
+  "permissions": ["scripting", "storage", "contextMenus", "tabs", "activeTab"],
+  "background": {
+    "service_worker": "background.js"
+  },
   "options_ui": {
     "page": "options.html",
     "open_in_tab": false
   },
   "content_scripts": [
     {
-      "matches": [
-        "http://localhost:3000/*",
-        "https://*.myshopify.com/*",
-        "https://*.anker.com/*",
-        "https://*.eufy.com/*",
-        "https://*.mach.tech/*",
-        "https://*.soundcore.com/*",
-        "https://*.seenebula.com/*",
-        "https://*.ankermake.com/*",
-        "https://*.ankerwork.com/*"
-      ],
-      "exclude_matches": ["https://*.myshopify.com/admin/*"],
+      "matches": ["*://*/*"],
       "js": ["inject.js"]
     }
   ],
   "web_accessible_resources": [
     {
-      "matches": [
-        "http://localhost:3000/*",
-        "https://*.myshopify.com/*",
-        "https://*.anker.com/*",
-        "https://*.eufy.com/*",
-        "https://*.mach.tech/*",
-        "https://*.soundcore.com/*",
-        "https://*.seenebula.com/*",
-        "https://*.ankermake.com/*",
-        "https://*.ankerwork.com/*"
-      ],
+      "matches": ["*://*/*"],
       "resources": ["menus.js"]
     }
   ],
